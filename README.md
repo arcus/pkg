@@ -6,5 +6,6 @@ This repository should **not** contain any packages implementing core domain log
 
 ## Packages
 
-- [log](./log) - Log package which outputs structured (JSON) logs in a type safe way.
-- [reader](./reader) - Package currently containing a `UniversalReader` that handles carriage returns and the BOM.
+- [log](./log) - Simple log interface and implementation that outputs structured (JSON) logs in a type safe way.
+- [reader](./reader) - Provides a `UniversalReader` type that handles carriage returns and the BOM, originally developed for properly reading CSV data.
+- [status](./status) - Defines a set of standard protocol-agnostic status codes with an HTTP mapping.
