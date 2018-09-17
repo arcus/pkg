@@ -1,6 +1,10 @@
 package status
 
-import "fmt"
+import (
+	"fmt"
+
+	"google.golang.org/grpc/status"
+)
 
 // Status represents an RPC status code, message, and details.  It is immutable
 // and should be created with New, Newf, or FromProto.
@@ -64,9 +68,15 @@ func FromError(err error) (s *Status, ok bool) {
 	if err == nil {
 		return &Status{code: OK}, true
 	}
+
 	if s, ok := err.(*Status); ok {
 		return s, true
 	}
+
+	if s, ok := status.FromError(err); ok {
+		return New(Code(s.Code()), s.Message()), true
+	}
+
 	return New(Unknown, err.Error()), false
 }
 
