@@ -1,0 +1,50 @@
+package config
+
+import (
+	"os"
+	"strings"
+
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
+)
+
+func Init(prefix string, config interface{}, bind func(*pflag.FlagSet) error) ([]string, error) {
+	// Initialize the flags for the config.
+	fs := pflag.NewFlagSet(os.Args[0], pflag.ExitOnError)
+
+	// Run bind function from user program to setup flags.
+	if err := bind(fs); err != nil {
+		return nil, err
+	}
+
+	// Parse the flags which default to taking os.Args
+	fs.Parse(os.Args[1:])
+
+	// Use viper to merge config sources.
+	v := viper.New()
+
+	// Bind flags.
+	fs.VisitAll(func(f *pflag.Flag) {
+		v.BindPFlag(f.Name, fs.Lookup(f.Name))
+	})
+
+	// Use env variables with the provided prefix.
+	v.SetEnvPrefix(prefix)
+	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	v.AutomaticEnv()
+
+	// Read the config file if provided.
+	if v.GetString("conf") != "" {
+		v.SetConfigFile(v.GetString("conf"))
+		if err := v.ReadInConfig(); err != nil {
+			return nil, err
+		}
+	}
+
+	// Decode resulting options into config.
+	if err := v.Unmarshal(config); err != nil {
+		return nil, err
+	}
+
+	return fs.Args(), nil
+}
