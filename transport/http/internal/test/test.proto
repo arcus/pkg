@@ -1,0 +1,39 @@
+syntax = "proto3";
+package test;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/duration.proto";
+
+enum Enum {
+  FOO = 0;
+  BAR_BAZ = 1;
+}
+
+message Message {
+  string message = 1;
+}
+
+message All {
+  int32 int32 = 1;
+  int64 int64 = 2;
+  uint32 uint32 = 3;
+  uint64 uint64 = 4;
+
+  bool bool = 7;
+
+  string string = 10;
+  bytes bytes = 11;
+  map<string, float> map = 12;
+
+  google.protobuf.Any any = 20;
+  google.protobuf.Empty empty = 21;
+  google.protobuf.Timestamp timestamp = 22;
+  google.protobuf.Struct struct = 23;
+  google.protobuf.Duration duration = 24;
+
+  Enum enum = 30;
+  Message message = 31;
+}
