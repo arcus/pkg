@@ -9,7 +9,8 @@ import (
 	"github.com/golang/protobuf/ptypes"
 )
 
-// Context is a custom implementation of the context.Context interface that adds application specific data.
+// Context is a custom implementation of the context.Context interface that
+// adds application specific data.
 type Context struct {
 	ServiceName    string
 	ServiceVersion string

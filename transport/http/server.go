@@ -141,10 +141,7 @@ func newErrorHandler(mux *echo.Echo) echo.HTTPErrorHandler {
 
 func serviceContextMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		ctx, ok := c.Request().Context().(*service.Context)
-		if !ok {
-			ctx = service.WithContext(c.Request().Context())
-		}
+		ctx := ContextFromRequest(c.Request())
 		c.SetRequest(c.Request().WithContext(ctx))
 		return next(c)
 	}

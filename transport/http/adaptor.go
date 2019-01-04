@@ -23,10 +23,7 @@ type Adaptor func(next service.Handler) echo.HandlerFunc
 func MakeDefaultAdaptor(req proto.Message) Adaptor {
 	return func(next service.Handler) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			ctx, ok := c.Request().Context().(*service.Context)
-			if !ok {
-				ctx = service.WithContext(c.Request().Context())
-			}
+			ctx := ContextFromRequest(c.Request())
 
 			// Make a copy.
 			req = copyProto(req)
