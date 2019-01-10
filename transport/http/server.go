@@ -18,7 +18,7 @@ func NewServer() *Server {
 	e := echo.New()
 	e.HideBanner = true
 	e.HidePort = true
-	e.Binder = &protoBinder{}
+	e.Binder = &ProtoBinder{}
 	e.HTTPErrorHandler = newErrorHandler(e)
 	e.Use(
 		middleware.Logger(),

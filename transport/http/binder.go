@@ -20,9 +20,9 @@ import (
 // query parameters in GET and DELETE requests and JSON or form encoded
 // bodies in all other requests into protobuf messages. This relies on
 // the jsonpb library.
-type protoBinder struct{}
+type ProtoBinder struct{}
 
-func (b *protoBinder) Bind(i interface{}, c echo.Context) error {
+func (b *ProtoBinder) Bind(i interface{}, c echo.Context) error {
 	// Ignore if not a proto message.
 	m, ok := i.(proto.Message)
 	if !ok {
