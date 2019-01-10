@@ -19,10 +19,10 @@ func NewServer() *Server {
 	e.HideBanner = true
 	e.HidePort = true
 	e.Binder = &ProtoBinder{}
-	e.HTTPErrorHandler = newErrorHandler(e)
+	e.HTTPErrorHandler = NewErrorHandler(e)
 	e.Use(
 		middleware.Logger(),
-		serviceContextMiddleware,
+		ServiceContextMiddleware,
 	)
 	return &Server{echo: e}
 }
@@ -129,7 +129,7 @@ func (s *Server) add(method, path string, a Adaptor, h service.Handler, m ...ser
 	return r
 }
 
-func newErrorHandler(mux *echo.Echo) echo.HTTPErrorHandler {
+func NewErrorHandler(mux *echo.Echo) echo.HTTPErrorHandler {
 	return func(err error, c echo.Context) {
 		s := status.Convert(err)
 		c.JSON(s.HTTPCode(), map[string]string{
@@ -139,7 +139,7 @@ func newErrorHandler(mux *echo.Echo) echo.HTTPErrorHandler {
 	}
 }
 
-func serviceContextMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+func ServiceContextMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := ContextFromRequest(c.Request())
 		c.SetRequest(c.Request().WithContext(ctx))
