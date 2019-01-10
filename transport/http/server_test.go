@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	msgJSON = `{"message":"ok"}`
+	msgJSON   = `{"message":"ok"}`
 	msgParams = "?message=ok"
 )
 
@@ -28,7 +28,7 @@ func TestQuery(t *testing.T) {
 	s := NewServer()
 	s.Query("/", MakeDefaultAdaptor(&testpb.Message{}), EchoHandler)
 
-	c, b := request(s, http.MethodGet, "/" + msgParams, "", nil)
+	c, b := request(s, http.MethodGet, "/"+msgParams, "", nil)
 	if c != http.StatusOK {
 		t.Errorf("unexpected status: %d\n", c)
 	}
@@ -61,7 +61,7 @@ func TestUseForHTTP(t *testing.T) {
 	})
 	s.Query("/", MakeDefaultAdaptor(&testpb.Message{}), EchoHandler)
 
-	c, b := request(s, http.MethodGet, "/" + msgParams, "", nil)
+	c, b := request(s, http.MethodGet, "/"+msgParams, "", nil)
 	if c != http.StatusOK {
 		t.Errorf("unexpected status: %d\n", c)
 	}
@@ -84,7 +84,7 @@ func TestUse(t *testing.T) {
 	})
 	s.Query("/", MakeDefaultAdaptor(&testpb.Message{}), EchoHandler)
 
-	c, b := request(s, http.MethodGet, "/" + msgParams, "", nil)
+	c, b := request(s, http.MethodGet, "/"+msgParams, "", nil)
 	if c != http.StatusOK {
 		t.Errorf("unexpected status: %d\n", c)
 	}
@@ -113,7 +113,7 @@ func TestUseBoth(t *testing.T) {
 	})
 	s.Query("/", MakeDefaultAdaptor(&testpb.Message{}), EchoHandler)
 
-	c, b := request(s, http.MethodGet, "/" + msgParams, "", nil)
+	c, b := request(s, http.MethodGet, "/"+msgParams, "", nil)
 	if c != http.StatusOK {
 		t.Errorf("unexpected status: %d\n", c)
 	}
@@ -125,7 +125,7 @@ func TestUseBoth(t *testing.T) {
 	}
 }
 
-func request(s *Server, method, path, contentType string, body io.Reader) (int, string) {
+func request(s http.Handler, method, path, contentType string, body io.Reader) (int, string) {
 	req := httptest.NewRequest(method, path, body)
 	req.Header.Set("Content-Type", contentType)
 	rec := httptest.NewRecorder()
