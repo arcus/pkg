@@ -2,6 +2,7 @@ package log
 
 import (
 	"bytes"
+	"errors"
 	"io/ioutil"
 	"regexp"
 	"strings"
@@ -60,6 +61,54 @@ func TestContext(t *testing.T) {
 	)
 
 	l.Info("test")
+	if !exp.Match(w.Bytes()) {
+		t.Error("expected output not matched")
+	}
+	t.Log(w.String())
+}
+
+func TestError(t *testing.T) {
+	var (
+		w bytes.Buffer
+		exp = regexp.MustCompile(`{"level":"info","event":"test","time":[0-9]+}`)
+	)
+	l := New(&w)
+
+	l.Info(errors.New("test"))
+	if !exp.Match(w.Bytes()) {
+		t.Error("expected output not matched")
+	}
+	t.Log(w.String())
+}
+
+type Foo struct{}
+
+func (f Foo) String() string {
+	return "foo"
+}
+
+func TestStringer(t *testing.T) {
+	var (
+		w bytes.Buffer
+		exp = regexp.MustCompile(`{"level":"info","event":"foo","time":[0-9]+}`)
+	)
+	l := New(&w)
+
+	l.Info(Foo{})
+	if !exp.Match(w.Bytes()) {
+		t.Error("expected output not matched")
+	}
+	t.Log(w.String())
+}
+
+func TestInt(t *testing.T) {
+	var (
+		w bytes.Buffer
+		exp = regexp.MustCompile(`{"level":"info","event":"13","time":[0-9]+}`)
+	)
+	l := New(&w)
+
+	l.Info(13)
 	if !exp.Match(w.Bytes()) {
 		t.Error("expected output not matched")
 	}

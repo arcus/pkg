@@ -77,8 +77,8 @@ func buildContext(c zerolog.Context, context []interface{}) zerolog.Context {
 
 type Logger interface {
 	EnableDebug(bool)
-	Info(event string, context ...interface{})
-	Debug(event string, context ...interface{})
+	Info(event interface{}, context ...interface{})
+	Debug(event interface{}, context ...interface{})
 	With(context ...interface{}) Logger
 	Prefix(string) Logger
 }
@@ -96,26 +96,36 @@ func (l *logger) EnableDebug(debug bool) {
 	}
 }
 
-func (l *logger) log(lvl zerolog.Level, event string, context ...interface{}) {
-	zl := l.l
+func (l *logger) log(lvl zerolog.Level, event interface{}, context ...interface{}) {
+	c := l.l.With()
 
 	if len(context) > 0 {
-		c := zl.With()
 		c = buildContext(c, context)
-		zl = c.Logger()
 	}
 
+	switch v := event.(type) {
+	case string:
+		c = c.Str("event", l.prefix+v)
+	case fmt.Stringer:
+		c = c.Str("event", l.prefix+v.String())
+	case error:
+		c = c.Str("event", l.prefix+v.Error())
+	default:
+		c = c.Str("event", l.prefix+fmt.Sprint(v))
+	}
+
+	zl := c.Logger()
+
 	zl.WithLevel(lvl).
-		Str("event", l.prefix+event).
 		Int64("time", time.Now().UnixNano()).
 		Msg("")
 }
 
-func (l *logger) Info(event string, context ...interface{}) {
+func (l *logger) Info(event interface{}, context ...interface{}) {
 	l.log(zerolog.InfoLevel, event, context...)
 }
 
-func (l *logger) Debug(event string, context ...interface{}) {
+func (l *logger) Debug(event interface{}, context ...interface{}) {
 	l.log(zerolog.DebugLevel, event, context...)
 }
 
