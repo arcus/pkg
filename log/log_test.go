@@ -3,6 +3,7 @@ package log
 import (
 	"bytes"
 	"io/ioutil"
+	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -19,14 +20,49 @@ func TestInfo(t *testing.T) {
 	t.Log(w.String())
 }
 
+func TestInfoContext(t *testing.T) {
+	var (
+		w bytes.Buffer
+		exp = regexp.MustCompile(`{"level":"info","foo":1,"bar":2,"event":"test","time":[0-9]+}`)
+	)
+
+	l := New(&w)
+	l.Info("test",
+		"foo", 1,
+		"bar", 2,
+	)
+
+	if !exp.Match(w.Bytes()) {
+		t.Error("expected output with context not matched")
+	}
+	t.Log(w.String())
+
+	w.Reset()
+
+	// Should not have context from first info call
+	exp = regexp.MustCompile(`{"level":"info","event":"test","time":[0-9]+}`)
+
+	l.Info("test")
+	if !exp.Match(w.Bytes()) {
+		t.Error("expected output without context not matched")
+	}
+	t.Log(w.String())
+}
+
 func TestContext(t *testing.T) {
-	var w bytes.Buffer
+	var (
+		w bytes.Buffer
+		exp = regexp.MustCompile(`{"level":"info","foo":1,"bar":2,"event":"test","time":[0-9]+}`)
+	)
 	l := New(&w).With(
 		"foo", 1,
 		"bar", 2,
 	)
 
 	l.Info("test")
+	if !exp.Match(w.Bytes()) {
+		t.Error("expected output not matched")
+	}
 	t.Log(w.String())
 }
 

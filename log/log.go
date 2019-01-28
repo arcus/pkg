@@ -8,9 +8,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func buildEvent(context []interface{}) *zerolog.Event {
-	e := zerolog.Dict()
-
+func buildContext(c zerolog.Context, context []interface{}) zerolog.Context {
 	var (
 		k  string
 		ok bool
@@ -34,47 +32,47 @@ func buildEvent(context []interface{}) *zerolog.Event {
 		case nil:
 			continue
 		case string:
-			e = e.Str(k, v)
+			c = c.Str(k, v)
 		case []byte:
-			e = e.Bytes(k, v)
+			c = c.Bytes(k, v)
 		case bool:
-			e = e.Bool(k, v)
+			c = c.Bool(k, v)
 		case error:
-			e = e.Str(k, v.Error())
+			c = c.Str(k, v.Error())
 		case int:
-			e = e.Int(k, v)
+			c = c.Int(k, v)
 		case int8:
-			e = e.Int8(k, v)
+			c = c.Int8(k, v)
 		case int16:
-			e = e.Int16(k, v)
+			c = c.Int16(k, v)
 		case int32:
-			e = e.Int32(k, v)
+			c = c.Int32(k, v)
 		case int64:
-			e = e.Int64(k, v)
+			c = c.Int64(k, v)
 		case uint:
-			e = e.Uint(k, v)
+			c = c.Uint(k, v)
 		case uint8:
-			e = e.Uint8(k, v)
+			c = c.Uint8(k, v)
 		case uint16:
-			e = e.Uint16(k, v)
+			c = c.Uint16(k, v)
 		case uint32:
-			e = e.Uint32(k, v)
+			c = c.Uint32(k, v)
 		case uint64:
-			e = e.Uint64(k, v)
+			c = c.Uint64(k, v)
 		case float32:
-			e = e.Float32(k, v)
+			c = c.Float32(k, v)
 		case float64:
-			e = e.Float64(k, v)
+			c = c.Float64(k, v)
 		case time.Time:
-			e = e.Time(k, v)
+			c = c.Time(k, v)
 		case time.Duration:
-			e = e.Dur(k, v)
+			c = c.Dur(k, v)
 		default:
-			e = e.Interface(k, v)
+			c = c.Interface(k, v)
 		}
 	}
 
-	return e
+	return c
 }
 
 type Logger interface {
@@ -98,37 +96,36 @@ func (l *logger) EnableDebug(debug bool) {
 	}
 }
 
-func (l *logger) Info(event string, context ...interface{}) {
-	e := l.l.WithLevel(zerolog.InfoLevel).
-		Str("event", l.prefix+event).
-		Int64("time", time.Now().UnixNano())
+func (l *logger) log(lvl zerolog.Level, event string, context ...interface{}) {
+	zl := l.l
 
 	if len(context) > 0 {
-		e = e.Dict("context", buildEvent(context))
+		c := zl.With()
+		c = buildContext(c, context)
+		zl = c.Logger()
 	}
 
-	e.Msg("")
+	zl.WithLevel(lvl).
+		Str("event", l.prefix+event).
+		Int64("time", time.Now().UnixNano()).
+		Msg("")
+}
+
+func (l *logger) Info(event string, context ...interface{}) {
+	l.log(zerolog.InfoLevel, event, context...)
 }
 
 func (l *logger) Debug(event string, context ...interface{}) {
-	e := l.l.WithLevel(zerolog.DebugLevel).
-		Str("event", l.prefix+event).
-		Int64("time", time.Now().UnixNano())
-
-	if len(context) > 0 {
-		e = e.Dict("context", buildEvent(context))
-	}
-
-	e.Msg("")
+	l.log(zerolog.DebugLevel, event, context...)
 }
 
 func (l *logger) With(context ...interface{}) Logger {
-	c := l.l.With()
-
-	if len(context) > 0 {
-		c = c.Dict("context", buildEvent(context))
+	if len(context) == 0 {
+		return l
 	}
 
+	c := l.l.With()
+	c = buildContext(c, context)
 	x := *l
 	x.l = c.Logger()
 	return &x
