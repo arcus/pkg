@@ -8,6 +8,13 @@ import (
 
 func NewErrorHandler(mux *echo.Echo) echo.HTTPErrorHandler {
 	return func(err error, c echo.Context) {
+		// Already an HTTP error, handling as normal.
+		if _, ok := err.(*echo.HTTPError); ok {
+			mux.DefaultHTTPErrorHandler(err, c)
+			return
+		}
+
+		// Otherwise convert it into a service status error and
 		s := status.Convert(err)
 		c.JSON(s.HTTPCode(), map[string]string{
 			"code":    s.Code().String(),
