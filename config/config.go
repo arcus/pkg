@@ -8,13 +8,20 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Init is a convenience function for populating a struct value with config file, environment variable,
+// and/or command-line options. This uses spf13/viper internally to handle this mapping.
+// Prefix is the environment variable prefix, config is a value pointer of the config type defined,
+// and the optional bind function can be used to define the command-line flags to correspond to
+// the config fields. If the "conf" flag is defined, it will be used as the path to a config file.
 func Init(prefix string, config interface{}, bind func(*pflag.FlagSet) error) ([]string, error) {
 	// Initialize the flags for the config.
 	fs := pflag.NewFlagSet(os.Args[0], pflag.ExitOnError)
 
 	// Run bind function from user program to setup flags.
-	if err := bind(fs); err != nil {
-		return nil, err
+	if bind != nil {
+		if err := bind(fs); err != nil {
+			return nil, err
+		}
 	}
 
 	// Parse the flags which default to taking os.Args

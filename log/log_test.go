@@ -23,7 +23,7 @@ func TestInfo(t *testing.T) {
 
 func TestInfoContext(t *testing.T) {
 	var (
-		w bytes.Buffer
+		w   bytes.Buffer
 		exp = regexp.MustCompile(`{"level":"info","foo":1,"bar":2,"event":"test","time":[0-9]+}`)
 	)
 
@@ -52,7 +52,7 @@ func TestInfoContext(t *testing.T) {
 
 func TestContext(t *testing.T) {
 	var (
-		w bytes.Buffer
+		w   bytes.Buffer
 		exp = regexp.MustCompile(`{"level":"info","foo":1,"bar":2,"event":"test","time":[0-9]+}`)
 	)
 	l := New(&w).With(
@@ -69,7 +69,7 @@ func TestContext(t *testing.T) {
 
 func TestError(t *testing.T) {
 	var (
-		w bytes.Buffer
+		w   bytes.Buffer
 		exp = regexp.MustCompile(`{"level":"info","event":"test","time":[0-9]+}`)
 	)
 	l := New(&w)
@@ -89,7 +89,7 @@ func (f Foo) String() string {
 
 func TestStringer(t *testing.T) {
 	var (
-		w bytes.Buffer
+		w   bytes.Buffer
 		exp = regexp.MustCompile(`{"level":"info","event":"foo","time":[0-9]+}`)
 	)
 	l := New(&w)
@@ -103,7 +103,7 @@ func TestStringer(t *testing.T) {
 
 func TestInt(t *testing.T) {
 	var (
-		w bytes.Buffer
+		w   bytes.Buffer
 		exp = regexp.MustCompile(`{"level":"info","event":"13","time":[0-9]+}`)
 	)
 	l := New(&w)
