@@ -40,6 +40,9 @@ func NewServer() *echo.Echo {
 	e.HidePort = true
 	e.Binder = &ProtoBinder{}
 	e.HTTPErrorHandler = NewErrorHandler(e)
+	e.Pre(
+		middleware.RemoveTrailingSlash(),
+	)
 	e.Use(
 		middleware.Logger(),
 		ServiceContextMiddleware,
