@@ -17,9 +17,12 @@ type Context struct {
 
 	Command proto.Message
 
-	AccessToken   string
-	PrincipalId   string
-	PrincipalRole string
+	AccessToken    string
+	PrincipalId    string
+	PrincipalRole  string
+	PrincipalType  string
+	PrincipalEmail string
+	PrincipalName  string
 
 	ctx context.Context
 }
@@ -51,11 +54,14 @@ func (c *Context) Value(key interface{}) interface{} {
 func (c *Context) Proto() proto.Message {
 	cmd, _ := ptypes.MarshalAny(c.Command)
 	return &pb.Context{
-		ServiceName: c.ServiceName,
+		ServiceName:    c.ServiceName,
 		ServiceVersion: c.ServiceVersion,
-		Command: cmd,
-		AccessToken: c.AccessToken,
-		PrincipalId: c.PrincipalId,
-		PrincipalRole: c.PrincipalRole,
+		Command:        cmd,
+		AccessToken:    c.AccessToken,
+		PrincipalId:    c.PrincipalId,
+		PrincipalRole:  c.PrincipalRole,
+		PrincipalEmail: c.PrincipalEmail,
+		PrincipalName:  c.PrincipalName,
+		PrincipalType:  c.PrincipalType,
 	}
 }

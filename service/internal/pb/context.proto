@@ -1,12 +1,9 @@
 syntax = "proto3";
-
 package arcus.pkg.service.internal.pb;
-
-option go_package = "pb";
-
 
 import "google/protobuf/any.proto";
 
+option go_package = "pb";
 
 message Context {
   // Name of the service that produced this event.
@@ -26,4 +23,10 @@ message Context {
 
   // Role of the principal account that sent the command.
   string principal_role = 6;
+
+  string principal_type = 7;
+
+  string principal_name = 8;
+
+  string principal_email = 9;
 }
