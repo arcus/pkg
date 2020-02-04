@@ -23,7 +23,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type Enum int32
 
@@ -63,6 +63,7 @@ func (*Message) ProtoMessage()    {}
 func (*Message) Descriptor() ([]byte, []int) {
 	return fileDescriptor_c161fcfdc0c3ff1e, []int{0}
 }
+
 func (m *Message) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Message.Unmarshal(m, b)
 }
@@ -115,6 +116,7 @@ func (*All) ProtoMessage()    {}
 func (*All) Descriptor() ([]byte, []int) {
 	return fileDescriptor_c161fcfdc0c3ff1e, []int{1}
 }
+
 func (m *All) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_All.Unmarshal(m, b)
 }
@@ -239,10 +241,10 @@ func (m *All) GetMessage() *Message {
 }
 
 func init() {
+	proto.RegisterEnum("test.Enum", Enum_name, Enum_value)
 	proto.RegisterType((*Message)(nil), "test.Message")
 	proto.RegisterType((*All)(nil), "test.All")
 	proto.RegisterMapType((map[string]float32)(nil), "test.All.MapEntry")
-	proto.RegisterEnum("test.Enum", Enum_name, Enum_value)
 }
 
 func init() { proto.RegisterFile("test.proto", fileDescriptor_c161fcfdc0c3ff1e) }
