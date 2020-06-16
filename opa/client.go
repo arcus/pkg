@@ -50,8 +50,11 @@ func newServiceInput(ctx *service.Context, req proto.Message) (interface{}, erro
 			"version": ctx.ServiceVersion,
 		},
 		"principal": map[string]interface{}{
-			"id":   ctx.PrincipalId,
-			"role": ctx.PrincipalRole,
+			"id":    ctx.PrincipalId,
+			"role":  ctx.PrincipalRole,
+			"name":  ctx.PrincipalName,
+			"email": ctx.PrincipalEmail,
+			"type":  ctx.PrincipalType,
 		},
 		"operation": map[string]interface{}{
 			"id":    proto.MessageName(req),
